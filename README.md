@@ -1,11 +1,11 @@
 # Project
 
-This repo contains a collection of end 2 end samples.
+This repo contains a collection of end to end samples.
 
 | Sample name                       | Description                         | Tech Stack                                                       |
 | --------------------------------- | ----------------------------------- | ---------------------------------------------------------------- |
 | Financial Earning calls assistant | Summarizes and Q&A on earning calls | PostGres Flex, Native vector search, deployed as a webapp        |
-| Fabric chatbot                    | Helps users on fabric documentation | Blob, Fabric One Lake, Azure Cognitive Search, deployed in Teams |
+| [Fabric chatbot](https://github.com/microsoft/QnABot-for-FabricDocs.git)                    | Helps users on fabric documentation | Blob, Fabric One Lake, Azure Cognitive Search, deployed in Teams |
 | ...                                  |                                     |                                                                  |
 
 As the maintainer of this project, please make a few updates:

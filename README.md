@@ -1,7 +1,12 @@
 # Project
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+This repo contains a collection of end 2 end samples.
+
+| Sample name                       | Description                         | Tech Stack                                                       |
+| --------------------------------- | ----------------------------------- | ---------------------------------------------------------------- |
+| Financial Earning calls assistant | Summarizes and Q&A on earning calls | PostGres Flex, Native vector search, deployed as a webapp        |
+| Fabric chatbot                    | Helps users on fabric documentation | Blob, Fabric One Lake, Azure Cognitive Search, deployed in Teams |
+| ...                                  |                                     |                                                                  |
 
 As the maintainer of this project, please make a few updates:
 

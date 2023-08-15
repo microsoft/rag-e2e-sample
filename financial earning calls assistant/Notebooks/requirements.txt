@@ -11,3 +11,4 @@ docx2pdf
 tiktoken
 scikit-learn
 mlflow
+azure-storage-blob

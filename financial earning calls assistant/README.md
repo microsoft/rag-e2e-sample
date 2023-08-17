@@ -3,7 +3,7 @@
 > This README explains the process of using native search on postgresql using Azure Flex and pgvector for search.
 
 
-Please move your documents into `DATA\` directory. Then execute the `step0_data_preprocessor.ipynb`
+Please run the notebook `step0_data_preprocessor.ipynb` which will pull the necessary documents in the `DATA\` director.
 
 ## Folder structure
 

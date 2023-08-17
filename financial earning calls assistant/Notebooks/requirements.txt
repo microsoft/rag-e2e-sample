@@ -1,0 +1,14 @@
+azure-ai-formrecognizer
+psycopg2
+python-dotenv
+openai
+pandas
+numpy
+pgvector
+langchain
+docx2txt
+docx2pdf
+tiktoken
+scikit-learn
+mlflow
+azure-storage-blob

@@ -3,7 +3,7 @@
 > This README explains the process of using native search on postgresql using Azure Flex and pgvector for search.
 
 
-Please download the CIF samples directory from the Teams Sharepoint from [here](https://microsoft.sharepoint.com/teams/CVS-CustomerCareLLMassistant/Shared%20Documents/Forms/AllItems.aspx?id=%2Fteams%2FCVS%2DCustomerCareLLMassistant%2FShared%20Documents%2FGeneral%2FCIF%20samples&p=true&ga=1) assuming you have access. Move it to the `DATA\` directory in the repo. Then execute the `data_preprocessor.py` for converting to pdf. Make sure the git/ADO repo is as close to the root e.g. C:\ as possible, in order to avoid long filename issues with path on Windows (or even MacOS and Linux).
+Please move your documents into `DATA\` directory. Then execute the `step0_data_preprocessor.ipynb`
 
 ## Folder structure
 

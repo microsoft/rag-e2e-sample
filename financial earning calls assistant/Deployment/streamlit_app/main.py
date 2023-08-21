@@ -3,7 +3,7 @@ import yaml
 import os
 import openai
 
-from llm_app import get_answer
+from llm_app import llm_chain
 
 # Read config yaml file
 with open('./streamlit_app/config.yml', 'r') as file:
@@ -53,7 +53,7 @@ if prompt := st.chat_input("Send a message"):
     with st.chat_message("user"):
         st.markdown(prompt)
     # Get bot response    
-    response = get_answer(prompt)
+    response = llm_chain(prompt)
     with st.chat_message("assistant", avatar=config['streamlit']['avatar']):
         st.markdown(response)
     # Add assistant response to chat history

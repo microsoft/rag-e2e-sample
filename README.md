@@ -1,19 +1,6 @@
-# Project
+# Connect and retrieve from ACS
 
-This repo contains a collection of end to end samples.
 
-| Sample name                       | Description                         | Tech Stack                                                       |
-| --------------------------------- | ----------------------------------- | ---------------------------------------------------------------- |
-| Financial Earnings calls assistant | Summarizes and Q&A on earning calls | PostGres Flex, Native vector search, deployed as a webapp        |
-| [Fabric chatbot](https://github.com/microsoft/QnABot-for-FabricDocs.git)                    | Helps users on fabric documentation | Blob, Fabric One Lake, Azure Cognitive Search, deployed in Teams |
-| ...                                  |                                     |                                                                  |
-
-As the maintainer of this project, please make a few updates:
-
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
 
 ## Contributing
 

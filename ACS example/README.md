@@ -1,58 +1,37 @@
-# Project
+# ACS + Chatbot
 
-> This README explains the process of using native search on postgresql using Azure Flex and pgvector for search.
+This branch provides following features: 
+1. Making ACS index and uploading data to ACS using python sdk.
+check Preprocessing_ACS_withsearch.ipynb
+
+2. Chatbot with memory
+chatbot_with_memory.py contains the functions with memory. 
+There are two types of chains with memory:
+a. qa_chain_ConversationBufferMemory: This chain saves the chat history and provides full chat history, along with context and human query to answer questions. It is recommended for small chats
+
+b. qa_chain_ConversationSummaryMemory: This chain saves the chat history. It uses context, summary of the chat history, and human query to answer questions. We can retrieve all chat messages if use this chain and its associated memory.  It is recommended for long chats.
+
+3. Combine various contexts so overall context token is less than some number
+Sometimes vector search retrieves many contexts and its not possible to fit in one llm call. 
+So, this feature combine all the context taking a user_query into consideration so relevant information is not lost.
+combine_docs in chatbot_with_memory.py does that. 
+
+4. acs_retriever: 
+acs retriever retrieves data from ACS with following options:
+options: "filter", "vector", "hybrid", filter vector", "filter hybrid"
+  acs_retriever in chatFunctions.py does that
+
+5. Chtabot with:
+a. memory, b. context that fits in the token limit, c. ACS retrivers with filter/vector-hybrid search
+
+chatBot class in chatFunctions.py
+
+# How to test?
+0. Go to ACS_example folder
+1. Open Preprocessing_ACS_withsearch.ipynb and run it
+2. Open chatBot.ipynb to run chatbot and its features
 
 
-Please run the notebook `step0_data_preprocessor.ipynb` which will pull the necessary documents in the `DATA\` director.
-
-## Folder structure
-
-```bash
- ├── DATA
- ├── Deployment
- │   └── streamlit_app
- │       ├── config.yaml
- │       ├── images
- │       ├── llm_app.py
- │       ├── main.py
- │       ├── example.env
- │       └── requirements.txt
- ├── Notebooks
- │   ├── mlruns
- │   ├── example.env
- │   ├── requirements.txt
- │   ├── step0_data_preprocessor.ipynb
- │   ├── step1_chunk_and_extract.ipynb
- │   ├── step1_chunk_and_extract.ipynb
- │   ├── step2_embed.ipynb
- │   ├── step3_db_data_insert_vectorsearch.ipynb
- │   ├── step4_retrieve_prompt_chain_design.ipynb
- │   ├── step5_mlflow_experimentation.ipynb
- │   ├── step6_mlflow_experimentation_jsonIO.ipynb
- │   └── requirements.txt
- ├── README.md
- └── ValidationSetOfQA
-
-```
-
-Before starting the project work, make sure to add keys to example.env and rename it as `llm_pgvector.env` in Notebooks as well as Deployment directories.
-
-The repo consists of six steps that should be followed in the below order:
-1. `Notebooks\step0_data_preprocessor.py` accesses the DATA\ word docs and converts to pdf to be used by the form recognizer step.
-2. `Notebooks\step1_chunk_and_extract.ipynb` chunks and extracts client code and text and saves to csv files.
-3. `Notebooks\step2_embed.ipynb` reads, embeds and saves to csv files.
-4. `Notebooks\step3_db_data_insert_vectorsearch.ipynb` reads and inserts data into the postgresql database and shows examples of hybrid search.
-5. `Notebooks\step4_retrieve_prompt_chain_design.ipynb` does design of hybrid search, retrieval, prompting, chaining and shows each step for getting generated answers to questions.
-6. `Notebooks\step_5_mlflow_experimentation.ipynb` shows experiment examples and mlflow tracking.
-
-For deployment, please `cd Deployment` and go over the `Deployment\README.md`.
-
-As the maintainer of this project, please make a few updates:
-
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
 
 
 ## Contributing

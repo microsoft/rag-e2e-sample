@@ -1,33 +1,42 @@
 # ACS + Chatbot
 
 This branch provides following features: 
-1. Making ACS index and uploading data to ACS using python sdk.
-check Preprocessing_ACS_withsearch.ipynb
+1. ACS index creation and data upload using python sdk.
 
-2. Chatbot with memory
-chatbot_with_memory.py contains the functions with memory. 
-There are two types of chains with memory:
-a. qa_chain_ConversationBufferMemory: This chain saves the chat history and provides full chat history, along with context and human query to answer questions. It is recommended for small chats
+    check Preprocessing_ACS_withsearch.ipynb
 
-b. qa_chain_ConversationSummaryMemory: This chain saves the chat history. It uses context, summary of the chat history, and human query to answer questions. We can retrieve all chat messages if use this chain and its associated memory.  It is recommended for long chats.
+2. Chatbot with memory functionality: The file "chatbot_with_memory.py" contains functions for chatbot with memory capabilities. Two distinct types of memory chains are available:
 
-3. Combine various contexts so overall context token is less than some number
-Sometimes vector search retrieves many contexts and its not possible to fit in one llm call. 
-So, this feature combine all the context taking a user_query into consideration so relevant information is not lost.
-combine_docs in chatbot_with_memory.py does that. 
+    a. qa_chain_ConversationBufferMemory: This chain uses the entire chat history,context and human queries for generating responses. It's recommended for shorter conversations.
+
+    b. qa_chain_ConversationSummaryMemory: This chain uses the condensed version of chat history, context and human queries for generating responses. It's preferable for longer conversations.
+
+
+3. Multiple contexts combination: combines multiple contexts while ensuring that the total context token count remains below a certain threshold, and considering human query to retain relevant information. Useful when the vector search retrieves numerous contexts that cannot fit into a single language model call. 
+
+    check "combine_docs" in chatbot_with_memory.py does that. 
+
 
 4. acs_retriever: 
 acs retriever retrieves data from ACS with following options:
 options: "filter", "vector", "hybrid", filter vector", "filter hybrid"
-  acs_retriever in chatFunctions.py does that
+      check acs_retriever in chatFunctions.py
 
-5. Chtabot with:
-a. memory, b. context that fits in the token limit, c. ACS retrivers with filter/vector-hybrid search
+5. Comprehensive Chtabot with:
 
-chatBot class in chatFunctions.py
+    a. memory, 
+    
+    b. context within token limit, 
+    
+    c. ACS retrivers with filter/vector-hybrid search
+
+    chatBot class in chatFunctions.py
+
+
+
 
 # How to test?
-0. Go to ACS_example folder
+0. Open ACS_example folder
 1. Open Preprocessing_ACS_withsearch.ipynb and run it
 2. Open chatBot.ipynb to run chatbot and its features
 

@@ -1,4 +1,21 @@
-# ACS + Chatbot
+# Retrieval Augmentation Generation (RAG) patterns
+
+This repo contains a collection of end to end samples that demonstrates various RAG patterns. It also provides feature specific code.
+
+In general, RAG process can be decomposed into three major steps: 
+1. Storing and retrieving documents from vector database: For this repo, we are using Azure cognitive search (ACS) service to store and retreive document. We have another repo that has other databases. 
+
+2. Designing a chatbot: Chatbot can have many features such as memory, context retrieval, etc. This repo mainly focuses on different approaches to design a chatbot 
+
+3. Deploying a chatbot: We are currently using streamlit just for demonstration of end-2-end functionality. However, there are many other ways in whic hthe chatbot can be deployed. 
+
+
+
+| Sample name                       | Description                         | Tech Stack                                                       |
+| --------------------------------- | ----------------------------------- | ---------------------------------------------------------------- |
+| Financial Earnings calls assistant | Summarizes and Q&A on earning calls | PostGres Flex, Native vector search, deployed as a webapp        |
+| [Fabric chatbot](https://github.com/microsoft/QnABot-for-FabricDocs.git)                    | Helps users on fabric documentation | Blob, Fabric One Lake, Azure Cognitive Search, deployed in Teams |
+| ...                                  |                                     |                                                                  |
 
 This branch provides following features: 
 1. ACS index creation and data upload using python sdk.
@@ -62,3 +79,9 @@ trademarks or logos is subject to and must follow
 [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.
+
+
+
+
+
+

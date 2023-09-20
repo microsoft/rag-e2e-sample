@@ -72,7 +72,7 @@ def qa_chain_ConversationSummaryMemory(prefix_template = None, to_debug = True, 
         prefix_template = """
         You are a chatbot having a conversation with a human. 
         Given the Context, Chat History, and a Human Query, 
-        create a final answer. Don't hallucinate at all. """
+        create a final answer. Don't hallucinate at all. If you don't have an answer, say "I don't know". """
         
     template = prefix_template + """
     Context: 

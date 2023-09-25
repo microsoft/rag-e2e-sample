@@ -10,24 +10,20 @@ from dotenv import dotenv_values
 import tiktoken
 
 # specify the name of the .env file name 
-env_name = "../../llm.env" # change to use your own .env file
-config = dotenv_values(env_name)
+# env_name = "../llm.env" # change to use your own .env file
+# config = dotenv_values(env_name)
 
-os.environ["OPENAI_API_TYPE"] = config["OPENAI_API_TYPE"] #"azure"
-os.environ["OPENAI_API_KEY"] = config['OPENAI_API_KEY']
-os.environ["OPENAI_API_BASE"] = config['OPENAI_API_BASE']
-os.environ["OPENAI_API_VERSION"] = config['OPENAI_API_VERSION']
+# os.environ["OPENAI_API_TYPE"] = config["OPENAI_API_TYPE"] #"azure"
+# os.environ["OPENAI_API_KEY"] = config['OPENAI_API_KEY']
+# os.environ["OPENAI_API_BASE"] = config['OPENAI_API_BASE']
+# os.environ["OPENAI_API_VERSION"] = config['OPENAI_API_VERSION']
 
 
 ##############################################################
 ###### QA chain with converational buffer memory #############
 ##############################################################
-def qa_chain_ConversationBufferMemory(prefix_template = None, to_debug = True, llm = None):
-
-    if llm is None:
-        # Define the LLM model
-        llm= AzureOpenAI(deployment_name="text-davinci-003", model_name="text-davinci-003", temperature=0)
-        
+def qa_chain_ConversationBufferMemory(llm, prefix_template = None, to_debug = False):
+       
     # Write a preprompt with context and query as variables
     if prefix_template is None:
         prefix_template = """
@@ -61,12 +57,8 @@ def qa_chain_ConversationBufferMemory(prefix_template = None, to_debug = True, l
 ##############################################################
 ###### QA chain with converational Summary memory #############
 ##############################################################
-def qa_chain_ConversationSummaryMemory(prefix_template = None, to_debug = True, llm = None):
-
-    if llm is None:
-        # Define the LLM model
-        llm= AzureOpenAI(deployment_name="text-davinci-003", model_name="text-davinci-003", temperature=0)
-        
+def qa_chain_ConversationSummaryMemory(llm, prefix_template = None, to_debug = False):
+ 
     # Write a preprompt with context and query as variables
     if prefix_template is None:
         prefix_template = """
@@ -111,11 +103,7 @@ def qa_chain_ConversationSummaryMemory(prefix_template = None, to_debug = True, 
 ################################################################
 ###### Summarize chain with user query and context #############
 ################################################################
-def summary_chain_with_user_query(prefix_template = None, to_debug = True, llm = None):
-
-    if llm is None:
-        # Define the LLM model
-        llm= AzureOpenAI(deployment_name="text-davinci-003", model_name="text-davinci-003", temperature=0)
+def user_query_based_context_summarization(llm, prefix_template = None, to_debug = False):
         
     # Write a preprompt with context and query as variables
     if prefix_template is None:
@@ -142,7 +130,7 @@ def summary_chain_with_user_query(prefix_template = None, to_debug = True, llm =
 ###### Write a summary given multiple contexts #############
 ################################################################
 
-def combine_docs(context_list, to_debug = True, llm = None, max_tokens = 16000, user_query = None, prefix_template = None):
+def combine_docs(context_list, llm, to_debug = False, max_tokens = 16000, user_query = None, prefix_template = None):
     """Given a list of documents, combine them into a single document with a max token limit."""
 
     ## When all the documents can be concatenated
@@ -156,7 +144,7 @@ def combine_docs(context_list, to_debug = True, llm = None, max_tokens = 16000, 
         context_all = ""
 
     ## When all the documents cannot be concatenated
-    query_based_summary_chain = summary_chain_with_user_query(prefix_template = prefix_template, to_debug = to_debug, llm = llm)
+    query_based_summary_chain = summary_chain_with_user_query(llm, prefix_template = prefix_template, to_debug = to_debug)
 
     if user_query is None:
         user_query = ""

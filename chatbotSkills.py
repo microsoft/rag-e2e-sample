@@ -13,7 +13,6 @@ import tiktoken
 ###### QA chain with converational buffer memory #############
 ##############################################################
 def qa_chain_ConversationBufferMemory(llm, prefix_template=None, to_debug=False):
-       
     # Write a preprompt with context and query as variables
     if prefix_template is None:
         prefix_template = """
@@ -36,7 +35,7 @@ def qa_chain_ConversationBufferMemory(llm, prefix_template=None, to_debug=False)
         input_variables=["chat_history", "human_input", "context"], template=template
     )
     
-    #Define Memory
+    # Define Memory
     memory = ConversationBufferMemory(memory_key="chat_history", input_key="human_input")
     
     # Define a chain
@@ -48,13 +47,13 @@ def qa_chain_ConversationBufferMemory(llm, prefix_template=None, to_debug=False)
 ###### QA chain with converational Summary memory #############
 ##############################################################
 def qa_chain_ConversationSummaryMemory(llm, prefix_template=None, to_debug=False):
- 
     # Write a preprompt with context and query as variables
     if prefix_template is None:
         prefix_template = """
         You are a chatbot having a conversation with a human. 
         Given the Context, Chat History, and a Human Query, 
-        create a final answer. Don't hallucinate at all. If you don't have an answer, say "I don't know". """
+        create a final answer. Don't hallucinate at all. If you don't have an answer, say "I don't know".
+        """
         
     template = prefix_template + """
     Context: 
@@ -64,11 +63,13 @@ def qa_chain_ConversationSummaryMemory(llm, prefix_template=None, to_debug=False
     {chat_history}
 
     Human Query: {human_input}
-    Chatbot:"""
+    Chatbot:
+    """
 
     # Define a prompt template
     prompt = PromptTemplate(
-        input_variables=["chat_history", "human_input", "context"], template=template
+        input_variables=["chat_history", "human_input", "context"],
+        template=template
     )
     
     #Define Memory
@@ -83,8 +84,8 @@ def qa_chain_ConversationSummaryMemory(llm, prefix_template=None, to_debug=False
     New lines of conversation:
     {new_lines}
 
-    New summary:"""
-
+    New summary:
+    """
     
     # Define a chain
     qa_chain = LLMChain(llm=llm, prompt=prompt, memory=memory, verbose=to_debug)
@@ -94,18 +95,19 @@ def qa_chain_ConversationSummaryMemory(llm, prefix_template=None, to_debug=False
 ###### Summarize chain with user query and context #############
 ################################################################
 def user_query_based_context_summarization(llm, prefix_template=None, to_debug=False):
-        
     # Write a preprompt with context and query as variables
     if prefix_template is None:
         prefix_template = """
-        Write a concise summary of the context so that it includes the details related to the human query. """
+        Write a concise summary of the context so that it includes the details related to the human query.
+        """
         
     template = prefix_template + """
     Context: 
     {context}
     
     Human Query: {human_input}
-    Concise Summary:"""
+    Concise Summary:
+    """
 
     # Define a prompt template
     prompt = PromptTemplate(
@@ -132,11 +134,13 @@ def combine_docs(context_list, llm, to_debug=False, max_tokens=16000, user_query
         return context_all
 
     ## When all the documents cannot be concatenated
-
     if user_query is None:
         user_query = ""
 
-    query_based_summary_chain = user_query_based_context_summarization(llm, prefix_template=prefix_template, to_debug=to_debug)
+    query_based_summary_chain = user_query_based_context_summarization(llm,
+        prefix_template=prefix_template,
+        to_debug=to_debug
+    )
 
     context_all = ""
     for i in context_list:
@@ -145,12 +149,11 @@ def combine_docs(context_list, llm, to_debug=False, max_tokens=16000, user_query
         ## If the context_all is greater than max_tokens, then summarize the context_all again
         if count_tokens(context_all) > max_tokens: 
             context_all = query_based_summary_chain.run({
-            'context': context_all,
-            'human_input': user_query
+                'context': context_all,
+                'human_input': user_query
             })
     
     return context_all
-    
 
 
 ##############################################################

@@ -9,20 +9,10 @@ import os
 from dotenv import dotenv_values
 import tiktoken
 
-# specify the name of the .env file name 
-# env_name = "../llm.env" # change to use your own .env file
-# config = dotenv_values(env_name)
-
-# os.environ["OPENAI_API_TYPE"] = config["OPENAI_API_TYPE"] #"azure"
-# os.environ["OPENAI_API_KEY"] = config['OPENAI_API_KEY']
-# os.environ["OPENAI_API_BASE"] = config['OPENAI_API_BASE']
-# os.environ["OPENAI_API_VERSION"] = config['OPENAI_API_VERSION']
-
-
 ##############################################################
 ###### QA chain with converational buffer memory #############
 ##############################################################
-def qa_chain_ConversationBufferMemory(llm, prefix_template = None, to_debug = False):
+def qa_chain_ConversationBufferMemory(llm, prefix_template=None, to_debug=False):
        
     # Write a preprompt with context and query as variables
     if prefix_template is None:
@@ -57,7 +47,7 @@ def qa_chain_ConversationBufferMemory(llm, prefix_template = None, to_debug = Fa
 ##############################################################
 ###### QA chain with converational Summary memory #############
 ##############################################################
-def qa_chain_ConversationSummaryMemory(llm, prefix_template = None, to_debug = False):
+def qa_chain_ConversationSummaryMemory(llm, prefix_template=None, to_debug=False):
  
     # Write a preprompt with context and query as variables
     if prefix_template is None:
@@ -103,7 +93,7 @@ def qa_chain_ConversationSummaryMemory(llm, prefix_template = None, to_debug = F
 ################################################################
 ###### Summarize chain with user query and context #############
 ################################################################
-def user_query_based_context_summarization(llm, prefix_template = None, to_debug = False):
+def user_query_based_context_summarization(llm, prefix_template=None, to_debug=False):
         
     # Write a preprompt with context and query as variables
     if prefix_template is None:
@@ -130,7 +120,7 @@ def user_query_based_context_summarization(llm, prefix_template = None, to_debug
 ###### Write a summary given multiple contexts #############
 ################################################################
 
-def combine_docs(context_list, llm, to_debug = False, max_tokens = 16000, user_query = None, prefix_template = None):
+def combine_docs(context_list, llm, to_debug=False, max_tokens=16000, user_query=None, prefix_template=None):
     """Given a list of documents, combine them into a single document with a max token limit."""
 
     ## When all the documents can be concatenated
@@ -140,22 +130,17 @@ def combine_docs(context_list, llm, to_debug = False, max_tokens = 16000, user_q
 
     if count_tokens(context_all) < max_tokens:
         return context_all
-    else:
-        context_all = ""
 
     ## When all the documents cannot be concatenated
-    query_based_summary_chain = summary_chain_with_user_query(llm, prefix_template = prefix_template, to_debug = to_debug)
 
     if user_query is None:
         user_query = ""
 
+    query_based_summary_chain = user_query_based_context_summarization(llm, prefix_template=prefix_template, to_debug=to_debug)
+
     context_all = ""
     for i in context_list:
-        context_i = query_based_summary_chain.run({
-        'context': i,
-        'human_input': user_query
-        })
-        context_all = context_all + context_i + "\n\n"
+        context_all = context_all + i + "\n\n"
 
         ## If the context_all is greater than max_tokens, then summarize the context_all again
         if count_tokens(context_all) > max_tokens: 
@@ -178,26 +163,3 @@ def count_tokens(string: str, encoding_name: str="gpt-4-32k") -> int:
     return num_tokens
 
 
-if __name__ == "__main__":
-    # Make a Quesion Answer chain function and pass 
-    qa_chain = qa_chain_ConversationSummaryMemory()
-
-    answer = qa_chain.run({
-    'context': "NASA is a space agency",
-    'human_input': "What is NASA" 
-    })
-
-    print(answer)
-    print()
-    print(qa_chain.memory)
-
-    print("Second Message")
-
-    answer = qa_chain.run({
-    'context': "ISRO is indian space agency",
-    'human_input': "What is ISRO" 
-    })
-
-    print(answer)
-    print()
-    print(qa_chain.memory)

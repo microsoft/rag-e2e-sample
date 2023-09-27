@@ -29,9 +29,9 @@ from azure.search.documents.indexes.models import (
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chat_models import AzureChatOpenAI
 from langchain.schema import HumanMessage
-from chatbot_with_memory import qa_chain_ConversationSummaryMemory, combine_docs, summary_chain_with_user_query
+from chatbotSkills import qa_chain_ConversationSummaryMemory, combine_docs
 
-env_name = "../../llm.env" # change to use your own .env file
+env_name = "llm.env" # change to use your own .env file
 config = dotenv_values(env_name)
 
 #Azure OpenAI

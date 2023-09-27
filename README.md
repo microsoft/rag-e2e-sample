@@ -3,11 +3,11 @@
 This repo contains a collection of end to end samples that demonstrates various RAG patterns. It also provides feature specific code.
 
 In general, RAG process can be decomposed into three major steps: 
-1. Storing and retrieving documents from vector database: For this repo, we are using Azure cognitive search (ACS) service to store and retreive document. We have another repo that has other databases. 
+1. Storing and retrieving documents from vector database: For this repo, we are using Azure cognitive search (ACS) service to store and retrieve document. We have another repo that has other databases. 
 
 2. Designing a chatbot: Chatbot can have many features such as memory, context retrieval, etc. This repo mainly focuses on different approaches to design a chatbot 
 
-3. Deploying a chatbot: We are currently using streamlit just for demonstration of end-2-end functionality. However, there are many other ways in whic hthe chatbot can be deployed. 
+3. Deploying a chatbot: We are currently using streamlit just for demonstration of end-2-end functionality. However, there are many other ways in which the chatbot can be deployed. 
 
 
 
@@ -39,13 +39,13 @@ acs retriever retrieves data from ACS with following options:
 options: "filter", "vector", "hybrid", filter vector", "filter hybrid"
       check acs_retriever in chatFunctions.py
 
-5. Comprehensive Chtabot with:
+5. Comprehensive Chatbot with:
 
     a. memory, 
     
     b. context within token limit, 
     
-    c. ACS retrivers with filter/vector-hybrid search
+    c. ACS retrievers with filter/vector-hybrid search
 
     chatBot class in chatFunctions.py
 

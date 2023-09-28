@@ -65,28 +65,24 @@ def acs_retriever(search_client, query = None, colName = None, colVal= None, sea
   
     if colName == None: ## No filters
         if searchtype == None or seachtype == "vector": #(default vector)
-            results = search_client.search(search_text=None,vectors= [vector])
+            results = search_client.search(search_text=None, vectors= [vector])
         else: # hybrid
-            results = search_client.search(search_text=query,vectors= [vector])
+            results = search_client.search(search_text=query, vectors= [vector])
             
     else: ## Filters        
         filter_str = " and ".join(f"({key} eq '{value}')" for key, value in zip(colName, colVal))
         filter_str = f"({filter_str})"
-        # print(filter_str)
         
         if query == None: #Pure filter
             results = search_client.search(search_text = None, filter = filter_str)
-            
-        elif searchtype == None or searchtype == "filter vector" or searchtype == "vector": #(default filter vector)
+        elif searchtype == None or searchtype == "filter vector" or searchtype == "vector": # (default filter vector)
             results = search_client.search(search_text = None, vectors = [vector], filter = filter_str)
-            
         else: # filter hybrid
             results = search_client.search(search_text = query, vectors = [vector], filter = filter_str)
          
     output = [result for result in results]
     return output
 
-## 
 def queryParser(query):
     # Extract ticker using regular expression
     ticker_match = re.search(r'\bticker\s+(\w+)', query, re.IGNORECASE)
@@ -103,22 +99,29 @@ def queryParser(query):
     return ticker, str(year), quarter
 
 
-## ####################################
+######################################
 ## Chatbot
 ######################################
 
 class chatBot:
-    def __init__(self, llm, acs_search_client, max_token_for_context = 16000, 
-                 template_qa_chain = None, template_context_summarization = None, 
-                 numChunks= 10, vectorColName = "contentVector",
-                 to_debug = False):
+    def __init__(
+        self,
+        llm,
+        acs_search_client,
+        max_token_for_context=16000, 
+        template_qa_chain=None,
+        template_context_summarization=None, 
+        numChunks=10,
+        vectorColName="contentVector",
+        to_debug=False
+    ):
         
-        #ACS
+        # ACS
         self.search_client = acs_search_client
         self.numChunks = numChunks
         self.vectorColName = vectorColName
         
-        #llm chain
+        # LLM chain
         self.llm = llm
         self.max_token_for_context = max_token_for_context
         
@@ -128,28 +131,36 @@ class chatBot:
             self.template_qa_chain= """You are a chatbot having a conversation with a human. 
                                     Given the Context, Chat History, and Human Query, 
                                     answer without hallucinating. 
-                                    If you don't have the answer say "I don't have the answer" """
+                                    If you don't have the answer say 'I don't have the answer'
+                                    """
             
         if template_context_summarization:
             self.template_context_summarization = template_context_summarization
         else:
             self.template_context_summarization =  """Summarize the context so it includes 
-                                                        the details related to the human query. """
+                                                    the details related to the human query.
+                                                    """
         
-        self.qa_chain = qa_chain_ConversationSummaryMemory(prefix_template = self.template_qa_chain, 
-                                                           to_debug = to_debug, llm = self.llm)
-        
-#         answer = qa_chain.run({'context': context_all,'human_input': human_query})
-              
+        self.qa_chain = qa_chain_ConversationSummaryMemory(
+            prefix_template=self.template_qa_chain, 
+            to_debug=to_debug,
+            llm=self.llm
+        )
     
         
     def run(self, human_query):
         ticker, year, quarter = queryParser(human_query)
         
-        ## acs
-        output = acs_retriever(self.search_client, query = human_query, 
-                               colName = ['Ticker', 'Year', 'Quarter'], colVal= [ticker, year, quarter], 
-                               searchtype = None, numChunks = self.numChunks, vectorColName = self.vectorColName)
+        ## AC
+        output = acs_retriever(
+            self.search_client,
+            query=human_query, 
+            colName=['Ticker', 'Year', 'Quarter'],
+            colVal=[ticker, year, quarter], 
+            searchtype=None,
+            numChunks=self.numChunks,
+            vectorColName=self.vectorColName
+        )
         context_list = [i['FileContentsChunked'] for i in output]
         
         

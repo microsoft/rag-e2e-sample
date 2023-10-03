@@ -1,1 +1,0 @@
-### Please upload all the word documents (.docx) in this folder.

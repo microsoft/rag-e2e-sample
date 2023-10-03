@@ -16,13 +16,17 @@ RUN chmod -R 777 /opt/chatbot
 WORKDIR /opt/chatbot
 USER micromamba
 EXPOSE 8000
-COPY environment.yml environment.yml
-RUN micromamba install -y -n base -f environment.yml && \
+COPY ../../chatBot.py ./chatBot.py
+COPY ../../chatbotSkills.py ./chatbotSkills.py
+COPY ../../environment.yaml ./environment.yaml
+COPY ../../llm.env llm.env
+RUN micromamba install -y -n base -f environment.yaml && \
    micromamba clean --all --yes
-COPY streamlit_app streamlit_app
+RUN pip install azure-search-documents --upgrade --pre
+COPY /samples_e2e/financial_transcripts/ /opt/chatbot/
 USER root
-RUN chmod -R 777 streamlit_app/
+RUN chmod -R 777 /opt/chatbot
 USER micromamba
 ENTRYPOINT ["streamlit", "run"]
-CMD ["./streamlit_app/main.py","--server.port","8000","--theme.base","dark"]
+CMD ["main.py","--server.port","8000","--theme.base","dark"]
 

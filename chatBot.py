@@ -30,9 +30,20 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chat_models import AzureChatOpenAI
 from langchain.schema import HumanMessage
 from chatbotSkills import qa_chain_ConversationSummaryMemory, combine_docs
+import pdb
 
-env_name = "llm.env" # change to use your own .env file
+# Get the absolute path to the .env file
+env_name = os.path.join(os.path.dirname(__file__), "llm.env")
+
+# Load environment variables from the .env file
 config = dotenv_values(env_name)
+
+if len(config) == 0:
+    env_name = os.path.join(os.path.dirname(__file__), "../../llm.env")
+    config = dotenv_values(env_name)
+
+    if len(config) == 0:
+        raise Exception("No environment variables loaded. Please check the *.env file.")
 
 #Azure OpenAI
 openai.api_type = config["OPENAI_API_TYPE"] #"azure"
@@ -41,9 +52,9 @@ openai.api_base = config['OPENAI_API_BASE']
 openai.api_version = config['OPENAI_API_VERSION']
 
 ## Cog Search
-cogsearch_name = config["COGSEARCH_NAME"] #TODO: fill in your cognitive search name
-index_name = config["COGSEARCH_INDEX_NAME"] #TODO: fill in your index name: must only contain lowercase, numbers, and dashes
-key = config["COGSEARCH_API_KEY"] #TODO: fill in your api key with admin key
+cogsearch_name = config["COGSEARCH_NAME"] 
+index_name = config["COGSEARCH_INDEX_NAME"]
+key = config["COGSEARCH_API_KEY"]
 service_endpoint = "https://"+config["COGSEARCH_NAME"] + ".search.windows.net"
 
 credential = AzureKeyCredential(key)
@@ -53,7 +64,7 @@ def createEmbeddings(text):
     embeddings = response['data'][0]['embedding']
     return embeddings
 
-def acs_retriever(search_client, query = None, colName = None, colVal= None, searchtype = None, numChunks = 5, vectorColName = "contentVector"):
+def acs_retriever(search_client, query=None, colName=None, colVal=None, searchtype=None, numChunks=5, vectorColName="Embedding"):
     # query: user query
     # colName: List of column name to search in ACS columns
     # colVal: List of column values to search in ACS
@@ -89,11 +100,11 @@ def queryParser(query):
     ticker = ticker_match.group(1) if ticker_match else None
 
     # Extract year using regular expression
-    year_match = re.search(r'\byear\s+(\d{4})', query, re.IGNORECASE)
+    year_match = re.search(r'\byear\s+(\d{2})', query, re.IGNORECASE)
     year = int(year_match.group(1)) if year_match else None
 
     # Extract quarter using regular expression
-    quarter_match = re.search(r'\bquarter\s+(Q\d)', query, re.IGNORECASE)
+    quarter_match = re.search(r'\bquarter\s+(\d)', query, re.IGNORECASE)
     quarter = quarter_match.group(1) if quarter_match else None
 
     return ticker, str(year), quarter
@@ -113,6 +124,7 @@ class chatBot:
         template_context_summarization=None, 
         numChunks=10,
         vectorColName="contentVector",
+        chunkColName="Chunk",
         to_debug=False
     ):
         
@@ -120,6 +132,7 @@ class chatBot:
         self.search_client = acs_search_client
         self.numChunks = numChunks
         self.vectorColName = vectorColName
+        self.chunkColName = chunkColName
         
         # LLM chain
         self.llm = llm
@@ -161,15 +174,68 @@ class chatBot:
             numChunks=self.numChunks,
             vectorColName=self.vectorColName
         )
-        context_list = [i['FileContentsChunked'] for i in output]
+        context_list = [i[self.chunkColName]  in output]
         
-        
-        context_all = combine_docs(context_list, to_debug = False, llm = self.llm, 
-                           max_tokens = self.max_token_for_context, user_query = human_query,
-                                   prefix_template = self.template_context_summarization)
+        context_all = combine_docs(
+            context_list,
+            to_debug=False,
+            llm=self.llm, 
+            max_tokens=self.max_token_for_context,
+            user_query=human_query,
+            prefix_template=self.template_context_summarization
+        )
         
         answer = self.qa_chain.run({'context': context_all,'human_input': human_query})
         return answer
+    
+    def retrieve_first(self, human_query, ticker, year, quarter):
+        ## AC
+        output = acs_retriever(
+            self.search_client,
+            query=human_query, 
+            colName=['Ticker', 'Year', 'Quarter'],
+            colVal=[ticker, year, quarter], 
+            searchtype=None,
+            numChunks=self.numChunks,
+            vectorColName=self.vectorColName
+        )
+        context_list = [i[self.chunkColName] for i in output]
+        
+        self.context_all = combine_docs(
+            context_list,
+            to_debug=False,
+            llm=self.llm, 
+            max_tokens=self.max_token_for_context,
+            user_query=human_query,
+            prefix_template=self.template_context_summarization
+        )
+        
+        return self.context_all
+    
+    def retrieve_again(self, human_query, ticker, year, quarter):
+        ## AC
+        output = acs_retriever(
+            self.search_client,
+            query=human_query, 
+            colName=['Ticker', 'Year', 'Quarter'],
+            colVal=[ticker, year, quarter], 
+            searchtype=None,
+            numChunks=self.numChunks,
+            vectorColName=self.vectorColName
+        )
+        context_list = [i[self.chunkColName] for i in output]
+        
+        # This is different: summarize with respect to also chat history
+        self.context_all = combine_docs(
+            context_list,
+            to_debug=False,
+            llm=self.llm, 
+            max_tokens=self.max_token_for_context,
+            user_query=tr(self.qa_chain.memory.chat_memory.messages[-2].content)+'\n\n'+human_query,
+            prefix_template=self.template_context_summarization
+        )
+        
+        return self.context_all
     
     def retrieveChatHistory(self):
         return self.qa_chain.memory.chat_memory

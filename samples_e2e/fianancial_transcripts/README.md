@@ -4,15 +4,15 @@ This README provides a comprehensive guide on implementing a question-answering 
 
 Before commencing the project, ensure that you add the necessary keys to example.env in the root directory and rename it as llm.env. Specifically, we require keys for Azure Form Recognizer, Azure Open AI, and Azure Cognitive Services.
 
-## LLM app
+## Large Language Model (LLM) application
 
-In this project, we've employed the RAG approach to develop an LLM (Language Learning Model) application. This involves retrieving context from the database using a human query, augmenting the context, and then prompting GPT-style models to generate an answer. However, we encountered two key challenges with the basic RAG implementation:
+In this project, we've employed the RAG approach to develop an LLM application. This involves retrieving context from the database using a human query, augmenting the context, and then prompting GPT-style models to generate an answer. However, we encountered two key challenges with the basic RAG implementation:
 
 1. Context Size: At times, the context retrieved from the database is excessively large and doesn't fit within the prompt for GPT-style models. To address this, we utilized an intermediate GPT call to summarize or extract the pertinent information from the retrieved context.
 
-2. User Queries Requiring Chat History: Some user queries necessitate access to previous chat history for accurate responses. To tackle this, we summarize the chat history and augment it with the human query and context.
+2. User Queries Requiring Chat History: Some user queries necessitate the access to previous chat history for accurate responses. To tackle this, we summarize the chat history and augment it with the human query and context.
 
-To address these challenges, we implemented the architecture shown in the figure below. The chatBot class in chatBot.py implements different functionalities shownn in the figure.
+To address these challenges, we implemented the architecture shown in the figure below. The chatBot class in chatBot.py implements different functionalities shown in the figure.
 
 <img src="images/chatbot.jpg" alt="Chatbot Architecture" width="75%" height="75%"/>
 
@@ -21,27 +21,21 @@ To address these challenges, we implemented the architecture shown in the figure
 ### Creating a Vector Database on Azure Cognitive Search (ACS)
 
 Crating a vector database is a four step process outlined below: 
-1. `step0_data_preprocessor.ipynb` accesses the DATA\ word docs and converts to pdf to be used by the form recognizer in the next step.
-2. `step1_chunk_and_extract.ipynb` chunks and extracts pdf files using form recognizer and save to csv. files.
-3. `step2_embed.ipynb` reads, embeds using azure openai and saves to csv files.
-4. `step3_db_storing_vectorsearch.ipynb` reads and inserts data into ACS and shows examples of various seraching capabilities using ACS hybrid search.
 
-### Running llm app
+1. `step0_data_preprocessor.ipynb` accesses the DATA\ word docs and convert them to PDF to be used by the Azure Form Recognizer in the next step.
+2. `step1_chunk_and_extract.ipynb` chunks and extracts PDF files using Azure Form Recognizer and save to .csv files.
+3. `step2_embed.ipynb` reads and embeds using Azure OpenAI and saves to .csv files.
+4. `step3_db_storing_vectorsearch.ipynb` reads and inserts data into ACS and shows examples of various searching capabilities using ACS hybrid search.
+
+### Running LLM application
 To run the LLM application, execute the llm_app.py file.
 
-### Deploy in stremlit
+### Deploy in Stremlit
 
-1. **To run the streamlit app locally:**
+1. **To run the Streamlit app locally:**
+
    1. In a terminal `streamlit run ./streamlit_app/main.py --server.port 8000`
-   2. open a web browser at `localhost:8000`
-
-As the maintainer of this project, please make a few updates:
-
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
-
+   2. Open a web browser at `localhost:8000`
 
 ## Contributing
 

@@ -1,36 +1,14 @@
 # Import required libraries  
 import os
 import re
-import pandas as pd
-import json  
-import openai  
-from dotenv import load_dotenv
+import openai
+import sys  
 from dotenv import dotenv_values
-from tenacity import retry, wait_random_exponential, stop_after_attempt  
 from azure.core.credentials import AzureKeyCredential  
-from azure.search.documents import SearchClient  
-from azure.search.documents.indexes import SearchIndexClient  
-from azure.search.documents.models import Vector  
-from azure.search.documents.indexes.models import (  
-    SearchIndex,  
-    SearchField,  
-    SearchFieldDataType,  
-    SimpleField,  
-    SearchableField,  
-    SearchIndex,  
-    SemanticConfiguration,  
-    PrioritizedFields,  
-    SemanticField,  
-    SearchField,  
-    SemanticSettings,  
-    VectorSearch,  
-    HnswVectorSearchAlgorithmConfiguration
-)
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.chat_models import AzureChatOpenAI
-from langchain.schema import HumanMessage
+from azure.search.documents.models import Vector
+sys.path.append("../..")   ## add directory above
 from chatbotSkills import qa_chain_ConversationSummaryMemory, combine_docs
-import pdb
+
 
 # Get the absolute path to the .env file
 env_name = os.path.join(os.path.dirname(__file__), "llm.env")
@@ -64,7 +42,9 @@ def createEmbeddings(text):
     embeddings = response['data'][0]['embedding']
     return embeddings
 
-def acs_retriever(search_client, query=None, colName=None, colVal=None, searchtype=None, numChunks=5, vectorColName="Embedding"):
+## Retrieves relevant content from Azure Cognitive Search (ACS)
+def acs_retriever(search_client, query=None, queryEmbedding = None, 
+                  colName=None, colVal=None, searchtype=None, numChunks=5, vectorColName="Embedding"):
     # query: user query
     # colName: List of column name to search in ACS columns
     # colVal: List of column values to search in ACS
@@ -72,10 +52,10 @@ def acs_retriever(search_client, query=None, colName=None, colVal=None, searchty
     #vectorColName: Name of vector embedding in ACS
 
     if query is not None:
-        vector = Vector(value=createEmbeddings(query), k=numChunks, fields=vectorColName)
+        vector = Vector(value=queryEmbedding, k=numChunks, fields=vectorColName)
   
     if colName == None: ## No filters
-        if searchtype == None or seachtype == "vector": #(default vector)
+        if searchtype == None or searchtype == "vector": #(default vector)
             results = search_client.search(search_text=None, vectors= [vector])
         else: # hybrid
             results = search_client.search(search_text=query, vectors= [vector])
@@ -154,27 +134,52 @@ class chatBot:
                                                     the details related to the human query.
                                                     """
         
+        # Memory chain
         self.qa_chain = qa_chain_ConversationSummaryMemory(
             prefix_template=self.template_qa_chain, 
             to_debug=to_debug,
             llm=self.llm
         )
+
+        # Transcripts specific
+        self.ticker = None
+        self.year = None
+        self.quarter = None
+
     
-        
     def run(self, human_query):
+
+        queryEmbedding = createEmbeddings(human_query)
+        ############## Parse query
         ticker, year, quarter = queryParser(human_query)
+
+        ## if user query doesn't contain ticker, year, and quarter, use the previous one
+        if ticker != None:
+            self.ticker = ticker
+        if year != str(None):
+            self.year = year
+        if quarter != None:
+            self.quarter = quarter
+
+        ## If ticker, year, and quarter are not found, return error message
+        if self.ticker == None or self.year == None or self.quarter == None:
+            print(self.ticker, self.year, self.quarter)
+            return "Sorry, please provide the ticker <INSERT>, year <INSERT>, and quarter <INSERT>. Example - ticker: MSFT, quarter: 3, year: 23."
         
-        ## AC
+        ############### Retrieve from ACS
         output = acs_retriever(
             self.search_client,
             query=human_query, 
+            queryEmbedding=queryEmbedding,
             colName=['Ticker', 'Year', 'Quarter'],
-            colVal=[ticker, year, quarter], 
+            colVal=[self.ticker, self.year, self.quarter], 
             searchtype=None,
             numChunks=self.numChunks,
             vectorColName=self.vectorColName
         )
-        context_list = [i[self.chunkColName]  in output]
+
+        #################### Combine Context
+        context_list = [i[self.chunkColName]  for i in output]
         
         context_all = combine_docs(
             context_list,
@@ -184,58 +189,15 @@ class chatBot:
             user_query=human_query,
             prefix_template=self.template_context_summarization
         )
-        
+
+        ## Append Ticker, Year, Quarter to the context
+        context_all = "\nTicker: " + self.ticker + "\nYear: " + self.year + "\nQuarter: " + self.quarter + "\n"+ context_all
+
+        # Augment and Generate Answer
+        # qa_chain below is a predefined chain with memory. It summarizes the chat history and augment to the context      
         answer = self.qa_chain.run({'context': context_all,'human_input': human_query})
         return answer
     
-    def retrieve_first(self, human_query, ticker, year, quarter):
-        ## AC
-        output = acs_retriever(
-            self.search_client,
-            query=human_query, 
-            colName=['Ticker', 'Year', 'Quarter'],
-            colVal=[ticker, year, quarter], 
-            searchtype=None,
-            numChunks=self.numChunks,
-            vectorColName=self.vectorColName
-        )
-        context_list = [i[self.chunkColName] for i in output]
-        
-        self.context_all = combine_docs(
-            context_list,
-            to_debug=False,
-            llm=self.llm, 
-            max_tokens=self.max_token_for_context,
-            user_query=human_query,
-            prefix_template=self.template_context_summarization
-        )
-        
-        return self.context_all
-    
-    def retrieve_again(self, human_query, ticker, year, quarter):
-        ## AC
-        output = acs_retriever(
-            self.search_client,
-            query=human_query, 
-            colName=['Ticker', 'Year', 'Quarter'],
-            colVal=[ticker, year, quarter], 
-            searchtype=None,
-            numChunks=self.numChunks,
-            vectorColName=self.vectorColName
-        )
-        context_list = [i[self.chunkColName] for i in output]
-        
-        # This is different: summarize with respect to also chat history
-        self.context_all = combine_docs(
-            context_list,
-            to_debug=False,
-            llm=self.llm, 
-            max_tokens=self.max_token_for_context,
-            user_query=tr(self.qa_chain.memory.chat_memory.messages[-2].content)+'\n\n'+human_query,
-            prefix_template=self.template_context_summarization
-        )
-        
-        return self.context_all
     
     def retrieveChatHistory(self):
         return self.qa_chain.memory.chat_memory

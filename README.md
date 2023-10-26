@@ -1,62 +1,47 @@
 # Retrieval Augmentation Generation (RAG) patterns
 
-This repo contains a collection of end to end samples that demonstrates various RAG patterns. It also provides feature specific code.
+Following the launch of ChatGPT, many companies express a keen interest in developing search engines in the style of ChatGPT, tailored to their specific datasets. To address this challenge, Retrieval Augmentation Generation (RAG) has emerged as a popular solution. RAG comprises a three-step process: 
 
-In general, RAG process can be decomposed into three major steps: 
-1. Storing and retrieving documents from vector database: For this repo, we are using Azure cognitive search (ACS) service to store and retrieve document. We have another repo that has other databases. 
+First, pertinent information (referred to as context) is retrieved from the database based on the human query
+Then, this context is enhanced and integrated with the human query.
+Finally, the enriched context is presented to GPT-style models to generate a response.
 
-2. Designing a chatbot: Chatbot can have many features such as memory, context retrieval, etc. This repo mainly focuses on different approaches to design a chatbot 
+We've observed that the RAG approach can take on various forms. For instance, certain problems necessitate a memory of past conversations, while in others, the database may offer an extensive context that surpasses the limits of LLM prompts. We've devised solutions for these challenges, which we refer to as skills. The objective of this repository is to offer a compendium of these skills, showcase how each can be applied independently, and also present some end-to-end examples demonstrating their utilization.
 
-3. Deploying a chatbot: We are currently using streamlit just for demonstration of end-2-end functionality. However, there are many other ways in which the chatbot can be deployed. 
+Please note that in addition to this repository, we maintain others that focus on different aspects of RAG.
 
+1. This repo would illustrate the use of Azure Cognitive Search (ACS) as a vector store. For those interested in employing other databases such as Postgres, AzureSQL, MongoDB, please refer to this [repository](https://github.com/microsoft/AzureDataRetrievalAugmentedGenerationSamples).
+
+2. For deployment, We employ [Streamlit](https://streamlit.io/). Alternatively, other options such as deploying through Azure Web App using docker containers or creating a chatbot in Microsoft Teams can be explored in this [repository](https://github.com/microsoft/QnABot-for-FabricDocs.git).
+
+## Skills
+
+This repo contains a collection of skills available in "chatbotSkills.py" and their code samples for individual skills: 
+
+1. Chatbot with memory functionality: "chatbotSkills.py" contains functions for chatbot enabled with memory capabilities. Two distinct types of memory skills are available:
+
+    a. qa_chain_ConversationBufferMemory: This skill leverages the entire chat history, context and human queries for generating responses. It's recommended for shorter conversations.
+
+    b. qa_chain_ConversationSummaryMemory: This skill uses the condensed version of chat history, context and human queries for generating responses. It's preferable for longer conversations.
+
+2. user_query_based_context_summarization: Summarize or extract the relevant information from the context based on the user query. 
+
+3. combine_docs: This skill is useful when search retrieves multiple contexts from the database that cannot fit into a single language model call. It combines multiple contexts while retaining the information that is relevant to user query. It also ensures that the total context token count remains below a certain threshold. 
+
+## End2End Sample for Different RAG patterns
+
+This repository also includes one end-to-end sample centered around financial transcripts. Please note that the plan is to incorporate additional samples that showcase various RAG patterns in the future.
 
 
 | Sample name                       | Description                         | Tech Stack                                                       |
 | --------------------------------- | ----------------------------------- | ---------------------------------------------------------------- |
-| Financial Earnings calls assistant | Summarizes and Q&A on earning calls | PostGres Flex, Native vector search, deployed as a webapp        |
-| [Fabric chatbot](https://github.com/microsoft/QnABot-for-FabricDocs.git)                    | Helps users on fabric documentation | Blob, Fabric One Lake, Azure Cognitive Search, deployed in Teams |
-| ...                                  |                                     |                                                                  |
-
-This branch provides following features: 
-1. ACS index creation and data upload using python sdk.
-
-    check Preprocessing_ACS_withsearch.ipynb
-
-2. Chatbot with memory functionality: The file "chatbot_with_memory.py" contains functions for chatbot with memory capabilities. Two distinct types of memory chains are available:
-
-    a. qa_chain_ConversationBufferMemory: This chain uses the entire chat history,context and human queries for generating responses. It's recommended for shorter conversations.
-
-    b. qa_chain_ConversationSummaryMemory: This chain uses the condensed version of chat history, context and human queries for generating responses. It's preferable for longer conversations.
+| Financial Earnings calls assistant | Summarizes and Q&A on earning calls | ACS, deployed on streamlit        |
 
 
-3. Multiple contexts combination: combines multiple contexts while ensuring that the total context token count remains below a certain threshold, and considering human query to retain relevant information. Useful when the vector search retrieves numerous contexts that cannot fit into a single language model call. 
+## How to use?
 
-    check "combine_docs" in chatbot_with_memory.py does that. 
-
-
-4. acs_retriever: 
-acs retriever retrieves data from ACS with following options:
-options: "filter", "vector", "hybrid", filter vector", "filter hybrid"
-      check acs_retriever in chatFunctions.py
-
-5. Comprehensive Chatbot with:
-
-    a. memory, 
-    
-    b. context within token limit, 
-    
-    c. ACS retrievers with filter/vector-hybrid search
-
-    chatBot class in chatFunctions.py
-
-
-
-
-# How to test?
-0. Open ACS_example folder
-1. Open Preprocessing_ACS_withsearch.ipynb and run it
-2. Open chatBot.ipynb to run chatbot and its features
-
+1. Examples of various skills are provided in samples_skills/demostrateSkills.ipynb
+2. End2End samples are at samples_e2e/ folder. Please follow the README in the folder itself.
 
 ## Contributing
 

@@ -1,46 +1,28 @@
 import os
 import openai
-import pandas as pd
-import numpy as np
-import json
-from typing import List, Optional
-import requests
 from dotenv import dotenv_values
-from langchain.docstore.document import Document
-from langchain.document_loaders.base import BaseLoader
-from langchain.prompts import PromptTemplate, ChatPromptTemplate
-from langchain.llms import AzureOpenAI
-from langchain.chains.question_answering import load_qa_chain
 from langchain.chat_models import AzureChatOpenAI
-from langchain.prompts.chat import SystemMessagePromptTemplate, HumanMessagePromptTemplate
-import tiktoken
-from langchain.chains.summarize import load_summarize_chain
-from langchain.chains import LLMChain, ConversationChain
-from langchain.memory import ConversationBufferMemory, ConversationSummaryMemory
 from azure.core.credentials import AzureKeyCredential  
 from azure.search.documents import SearchClient  
-from azure.search.documents.indexes import SearchIndexClient  
-from azure.search.documents.models import Vector  
-from langchain.callbacks import get_openai_callback
 import time
-import re
 import sys
-try:
-    from chatBot import chatBot, createEmbeddings, acs_retriever, queryParser
-    from chatbotSkills import count_tokens
-except:
-    sys.path.insert(0, '../..')
-    from chatBot import chatBot, createEmbeddings, acs_retriever, queryParser
-    from chatbotSkills import count_tokens
-import pdb
 
+from chatBot import chatBot
+sys.path.append("../..")   ## add directory above
+from chatbotSkills import count_tokens
+
+
+
+
+
+### Cofigurations
 VERBOSE = True
 TEMPERATURE = 0.0
 TOP_P = 1.0
 NUM_CHUNKS = 10
 MAX_TOKEN_FOR_CONTEXT = 27000
-VECTOR_COL_NAME = "Embedding"
-CHUNK_NAME = "Chunk"
+VECTOR_COL_NAME = "Embedding" ## Column name in ACS for vector embedding
+CHUNK_NAME = "Chunk" ## Colmun name in ACS for text data that contains the context
 
 TEMPLATE_QA_CHAIN = """You are a chatbot having a conversation with a human. 
         Given the Context, Chat History, and Human Query, 
@@ -99,6 +81,8 @@ llm = AzureChatOpenAI(
     verbose=VERBOSE,
 )
 
+## Chatbot class that implements the 
+
 cb = chatBot(
     llm,
     search_client,
@@ -112,38 +96,8 @@ cb = chatBot(
 )
 
 def get_answer(msg):
-    ticker, year, quarter = queryParser(msg)
-
-    parsed_info = []
-    if ticker != None and year != None and quarter != None:
-        parsed_info.append({"ticker": ticker, "year": year, "quarter": quarter})
-
-    # Error handling
-    if "clear memory" in msg.lower():
-        cb.qa_chain.memory.clear()
-        return "Memory cleared."
-    elif len(parsed_info) == 0 and len(cb.qa_chain.memory.chat_memory.messages) == 0:
-        return "Sorry, please provide the ticker <INSERT>, year <INSERT>, and quarter <INSERT> in your ask so I can retrieve from the vector database. Example - ticker: MSFT, quarter: 3, year: 23. If you are still receiving this error, try changing the details of your ask because the similarity might not be surfacing many results within the database."
-    elif len(parsed_info) > 0 and len(cb.qa_chain.memory.chat_memory.messages) == 0:
-        # First retrieve 
-        context_all = cb.retrieve_first(msg, ticker, year, quarter)
-    elif len(parsed_info) > 0 and len(cb.qa_chain.memory.chat_memory.messages) > 0:
-        # Retrieve new context, but continue conversation
-        context_all = cb.retrieve_again(msg, ticker, year, quarter)
-    elif len(parsed_info) == 0 and len(cb.qa_chain.memory.chat_memory.messages) > 0:
-        # Continue using existing context
-        context_all = cb.context_all
-        pass
-    else:
-        return "SOMETHING ELSE HAPPENED"
-    
-    ans = cb.qa_chain.run(
-        {
-            'context': context_all,
-            'human_input': msg
-        }
-    )
-
+    ans = cb.run(msg)
+ 
     return ans
 
 
@@ -160,5 +114,5 @@ if __name__ == '__main__':
     result_num_tokens = count_tokens(ans)
     print("Response num tokens: {}".format(result_num_tokens))
 
-    ans = get_answer("Who were the speakers about those themes?")
+    ans = get_answer("Is it possible to get more details about cloud ?")
     print(ans)

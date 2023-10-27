@@ -16,17 +16,17 @@ Please note that in addition to this repository, we maintain others that focus o
 
 ## Skills
 
-This repo contains a collection of skills available in "chatbotSkills.py" and their code samples for individual skills: 
+This repo contains a collection of skills available in `chatbotSkills.py` and their code samples for individual skills: 
 
-1. Chatbot with memory functionality: "chatbotSkills.py" contains functions for chatbot enabled with memory capabilities. Two distinct types of memory skills are available:
+1. Chatbot with memory functionality: `chatbotSkills.py` contains functions for chatbot enabled with memory capabilities. Two distinct types of memory skills are available:
 
-    a. qa_chain_ConversationBufferMemory: This skill leverages the entire chat history, context and human queries for generating responses. It's recommended for shorter conversations.
+    a. `qa_chain_ConversationBufferMemory`: This skill leverages the entire chat history, context and human queries for generating responses. It's recommended for shorter conversations.
 
-    b. qa_chain_ConversationSummaryMemory: This skill uses the condensed version of chat history, context and human queries for generating responses. It's preferable for longer conversations.
+    b. `qa_chain_ConversationSummaryMemory`: This skill uses the condensed version of chat history, context and human queries for generating responses. It's preferable for longer conversations.
 
-2. user_query_based_context_summarization: Summarize or extract the relevant information from the context based on the user query. 
+2. `user_query_based_context_summarization`: Summarize or extract the relevant information from the context based on the user query. 
 
-3. combine_docs: This skill is useful when search retrieves multiple contexts from the database that cannot fit into a single language model call. It combines multiple contexts while retaining the information that is relevant to user query. It also ensures that the total context token count remains below a certain threshold. 
+3. `combine_docs`: This skill is useful when search retrieves multiple contexts from the database that cannot fit into a single language model call. It combines multiple contexts while retaining the information that is relevant to user query. It also ensures that the total context token count remains below a certain threshold. 
 
 ## End2End Sample for Different RAG patterns
 
@@ -40,8 +40,8 @@ This repository also includes one end-to-end sample centered around financial tr
 
 ## How to use?
 
-1. Examples of various skills are provided in samples_skills/demostrateSkills.ipynb
-2. End2End samples are at samples_e2e/ folder. Please follow the README in the folder itself.
+1. Examples of various skills are provided in `samples_skills/demonstrateSkills.ipynb`
+2. End2End samples are at `samples_e2e/` folder. Please follow the README in the folder itself.
 
 ## Contributing
 

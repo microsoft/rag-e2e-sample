@@ -1,6 +1,6 @@
 # Project
 
-This README provides a comprehensive guide on implementing a question-answering system using the Retrieval Augmentation Generation (RAG) pattern on Microsoft (MSFT) transcripts. The process leverages Azure Cognitive Search (ACS) for creating a vector database and Azure Form Recognizer for processing raw documents.
+This README provides a comprehensive guide on implementing a question-answering system using the Retrieval Augmentation Generation (RAG) pattern on Microsoft (MSFT) earnings call transcripts. The process leverages Azure Cognitive Search (ACS) for creating a vector database and Azure Form Recognizer for processing raw documents.
 
 Before commencing the project, ensure that you add the necessary keys to example.env in the root directory and rename it as llm.env. Specifically, we require keys for Azure Form Recognizer, Azure Open AI, and Azure Cognitive Services.
 
@@ -25,7 +25,7 @@ Crating a vector database is a four step process outlined below:
 1. `step0_data_preprocessor.ipynb` accesses the DATA\ word docs and convert them to PDF to be used by the Azure Form Recognizer in the next step.
 2. `step1_chunk_and_extract.ipynb` chunks and extracts PDF files using Azure Form Recognizer and save to .csv files.
 3. `step2_embed.ipynb` reads and embeds using Azure OpenAI and saves to .csv files.
-4. `step3_db_storing_vectorsearch.ipynb` reads and inserts data into ACS and shows examples of various searching capabilities using ACS hybrid search.
+4. `step3_db_storing_vectorsearch.ipynb` reads and inserts data into ACS and shows examples of various search capabilities using ACS hybrid search from data.
 
 ### Running LLM application
 To run the LLM application, execute the llm_app.py file.
@@ -38,7 +38,8 @@ To run the LLM application, execute the llm_app.py file.
 streamlit run main.py --server.port 8000
 ```
 
-2. Build docker. Since the chatBot.py and environment.yaml files are at the parent directory, the Dockerfile only works if you run the command from the parent directory.   
+2. Build docker. Since the `chatbotSkills.py` and `environment.yaml` files are at the parent directory, the Dockerfile only works if you run the command from the parent directory.
+
 ```
 docker build -t bot:v1 -f samples_e2e/financial_transcripts/Dockerfile .
 docker run --rm -p 8000:8000 bot:v1

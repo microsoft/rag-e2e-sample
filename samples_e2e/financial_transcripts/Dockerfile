@@ -16,13 +16,11 @@ RUN chmod -R 777 /opt/chatbot
 WORKDIR /opt/chatbot
 USER micromamba
 EXPOSE 8000
-COPY ../../chatBot.py ./chatBot.py
 COPY ../../chatbotSkills.py ./chatbotSkills.py
 COPY ../../environment.yaml ./environment.yaml
 COPY ../../llm.env llm.env
 RUN micromamba install -y -n base -f environment.yaml && \
    micromamba clean --all --yes
-RUN pip install azure-search-documents --upgrade --pre
 COPY /samples_e2e/financial_transcripts/ /opt/chatbot/
 USER root
 RUN chmod -R 777 /opt/chatbot

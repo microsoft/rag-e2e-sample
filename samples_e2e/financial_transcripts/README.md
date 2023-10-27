@@ -2,7 +2,9 @@
 
 This README provides a comprehensive guide on implementing a question-answering system using the Retrieval Augmentation Generation (RAG) pattern on Microsoft (MSFT) earnings call transcripts. The process leverages Azure Cognitive Search (ACS) for creating a vector database and Azure Form Recognizer for processing raw documents.
 
-Before commencing the project, ensure that you add the necessary keys to example.env in the root directory and rename it as llm.env. Specifically, we require keys for Azure Form Recognizer, Azure Open AI, and Azure Cognitive Services.
+Before commencing the project, ensure that you add the necessary keys to `example.env` in the root directory and rename it as `llm.env`. Specifically, we require keys for [Azure AI Document Intelligence (previously Form Recognizer)](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/create-document-intelligence-resource?view=doc-intel-3.1.0), [Azure OpenAI](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource?pivots=web-portal), and [Azure Cognitive Search services](https://learn.microsoft.com/en-us/azure/search/search-create-service-portal). 
+
+Be sure to create new names in the `llm.env` for `COGSEARCH_INDEX_NAME` because the jupyter notebooks below will assist you with creating the new vector database with this name.
 
 ## Large Language Model (LLM) application
 

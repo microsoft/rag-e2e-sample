@@ -49,7 +49,7 @@ def acs_retriever(search_client, query=None, queryEmbedding = None,
     # colName: List of column name to search in ACS columns
     # colVal: List of column values to search in ACS
     # searchtype options: "filter", "vector", "hybrid", filter vector", "filter hybrid"
-    #vectorColName: Name of vector embedding in ACS
+    # vectorColName: Name of vector embedding in ACS
 
     if query is not None:
         vector = Vector(value=queryEmbedding, k=numChunks, fields=vectorColName)
@@ -164,7 +164,7 @@ class chatBot:
         ## If ticker, year, and quarter are not found, return error message
         if self.ticker == None or self.year == None or self.quarter == None:
             print(self.ticker, self.year, self.quarter)
-            return "Sorry, please provide the ticker <INSERT>, year <INSERT>, and quarter <INSERT>. Example - ticker: MSFT, quarter: 3, year: 23."
+            return "Sorry, please provide the ticker <INSERT>, year <INSERT>, and quarter <INSERT>. Example - ticker MSFT, quarter 3, year 23."
         
         ############### Retrieve from ACS
         output = acs_retriever(

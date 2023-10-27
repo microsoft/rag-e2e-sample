@@ -11,10 +11,6 @@ from chatBot import chatBot
 sys.path.append("../..")   ## add directory above
 from chatbotSkills import count_tokens
 
-
-
-
-
 ### Cofigurations
 VERBOSE = True
 TEMPERATURE = 0.0
@@ -81,7 +77,7 @@ llm = AzureChatOpenAI(
     verbose=VERBOSE,
 )
 
-## Chatbot class that implements the 
+## Chatbot class that implements the conversation agent
 
 cb = chatBot(
     llm,

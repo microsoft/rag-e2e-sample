@@ -5,7 +5,7 @@ streamlit:
   logo: "images/Microsoft_logo.png"
   page_icon: "images/Microsoft_logo.png"
   avatar: "images/openai.png"
-  assistant_intro_message: "Hi there :wave:, I'm an AI assistant. I can look up information through a database of earnings call transcripts to answer your questions. Please always specify the ticker and quarter in your question for example: \"ticker: MSFT, quarter: FY23Q2. How did MSFT do compared to last quarter?\""
+  assistant_intro_message: "Hi there :wave:, I'm an AI assistant. I can look up information through a database of earnings call transcripts to answer your questions. Please always specify the ticker and quarter in your question for example: \"ticker MSFT, quarter 1, year 23. How did MSFT do compared to last quarter?\""
   about: "A demo of an AI assistant. Powered by Azure OpenAI Large Language Models and search using native vector search capabilities on PostGres, authors: Azure Data/Applied AI team"
 azure:
   dummy: "test"

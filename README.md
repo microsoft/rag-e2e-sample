@@ -16,7 +16,7 @@ Please note that in addition to this repository, we maintain others that focus o
 
 ## Skills
 
-This repo contains a collection of skills available in `chatbotSkills.py` and their code samples for individual skills: 
+This repo contains a collection of skills available in `rag_skills/chatbotSkills.py` and their code samples for individual skills: 
 
 1. Chatbot with memory functionality: `chatbotSkills.py` contains functions for chatbot enabled with memory capabilities. Two distinct types of memory skills are available:
 
@@ -27,6 +27,8 @@ This repo contains a collection of skills available in `chatbotSkills.py` and th
 2. `user_query_based_context_summarization`: Summarize or extract the relevant information from the context based on the user query. 
 
 3. `combine_docs`: This skill is useful when search retrieves multiple contexts from the database that cannot fit into a single language model call. It combines multiple contexts while retaining the information that is relevant to user query. It also ensures that the total context token count remains below a certain threshold. 
+
+> NOTE: Skills are being updated as code snippets faster than this repo at [rag_skills](https://github.com/microsoft/rag_skills)
 
 ## End2End Sample for Different RAG patterns
 
@@ -40,8 +42,8 @@ This repository also includes one end-to-end sample centered around financial tr
 
 ## How to use?
 
-1. Examples of various skills are provided in `samples_skills/demonstrateSkills.ipynb`
-2. End2End samples are at `samples_e2e/` folder. Please follow the README in the folder itself.
+1. Lightweight examples of various skills are provided in `rag_skills/demonstrateSkills.ipynb`
+2. End2End samples are at `samples/` folder. Please follow the README in the folder itself.
 
 ## Contributing
 

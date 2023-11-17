@@ -6,7 +6,7 @@ import openai
 from llm_app import get_answer
 
 # Read config yaml file
-with open('config.yaml', 'r') as file:
+with open('st_config.yaml', 'r') as file:
     config = yaml.safe_load(file)
 #print(config)
 title = config['streamlit']['title']

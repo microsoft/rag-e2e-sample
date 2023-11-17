@@ -9,7 +9,7 @@ import sys
 
 from chatBot import chatBot
 sys.path.append("../..")   ## add directory above
-from chatbotSkills import count_tokens
+from rag_skills.chatbotSkills import count_tokens
 
 ### Cofigurations
 VERBOSE = True

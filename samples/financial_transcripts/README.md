@@ -37,7 +37,7 @@ To run the LLM application, execute the `llm_app.py` file.
 1. Run locally
 
 ```
-streamlit run main.py --server.port 8000
+streamlit run st_main.py --server.port 8000
 ```
 
 2. Build docker. Since the `rag_skills/chatbotSkills.py` and `environment.yaml` files are at the parent directory, the Dockerfile only works if you run the command from the parent directory.

@@ -9,7 +9,6 @@ from azure.search.documents.models import Vector
 sys.path.append("../..")   ## add directory above
 from rag_skills.chatbotSkills import qa_chain_ConversationSummaryMemory, combine_docs
 
-
 # Get the absolute path to the .env file
 env_name = os.path.join(os.path.dirname(__file__), "llm.env")
 

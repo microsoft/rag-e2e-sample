@@ -30,20 +30,20 @@ Crating a vector database is a four step process outlined below:
 4. `step3_db_storing_vectorsearch.ipynb` reads and inserts data into ACS and shows examples of various search capabilities using ACS hybrid search from data.
 
 ### Running LLM application
-To run the LLM application, execute the llm_app.py file.
+To run the LLM application, execute the `llm_app.py` file.
 
 #### Deployment with streamlit
 
 1. Run locally
 
 ```
-streamlit run main.py --server.port 8000
+streamlit run st_main.py --server.port 8000
 ```
 
-2. Build docker. Since the `chatbotSkills.py` and `environment.yaml` files are at the parent directory, the Dockerfile only works if you run the command from the parent directory.
+2. Build docker. Since the `rag_skills/chatbotSkills.py` and `environment.yaml` files are at the parent directory, the Dockerfile only works if you run the command from the parent directory.
 
 ```
-docker build -t bot:v1 -f samples_e2e/financial_transcripts/Dockerfile .
+docker build -t bot:v1 -f samples/financial_transcripts/Dockerfile .
 docker run --rm -p 8000:8000 bot:v1
 ```
 

@@ -7,8 +7,7 @@ from dotenv import dotenv_values
 from azure.core.credentials import AzureKeyCredential  
 from azure.search.documents.models import Vector
 sys.path.append("../..")   ## add directory above
-from chatbotSkills import qa_chain_ConversationSummaryMemory, combine_docs
-
+from rag_skills.chatbotSkills import qa_chain_ConversationSummaryMemory, combine_docs
 
 # Get the absolute path to the .env file
 env_name = os.path.join(os.path.dirname(__file__), "llm.env")

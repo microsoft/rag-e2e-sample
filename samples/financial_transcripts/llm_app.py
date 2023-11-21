@@ -6,10 +6,9 @@ from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient  
 import time
 import sys
-
 from chatBot import chatBot
 sys.path.append("../..")   ## add directory above
-from chatbotSkills import count_tokens
+from rag_skills.utils import count_tokens
 
 ### Cofigurations
 VERBOSE = True
@@ -18,7 +17,7 @@ TOP_P = 1.0
 NUM_CHUNKS = 10
 MAX_TOKEN_FOR_CONTEXT = 27000
 VECTOR_COL_NAME = "Embedding" ## Column name in ACS for vector embedding
-CHUNK_NAME = "Chunk" ## Colmun name in ACS for text data that contains the context
+CHUNK_NAME = "Chunk" ## Column name in ACS for text data that contains the context
 
 TEMPLATE_QA_CHAIN = """You are a chatbot having a conversation with a human. 
         Given the Context, Chat History, and Human Query, 

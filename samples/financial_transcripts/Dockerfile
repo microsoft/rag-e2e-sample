@@ -16,15 +16,15 @@ RUN chmod -R 777 /opt/chatbot
 WORKDIR /opt/chatbot
 USER micromamba
 EXPOSE 8000
-COPY ../../chatbotSkills.py ./chatbotSkills.py
+COPY ../../rag_skills /opt/chatbot/rag_skills
 COPY ../../environment.yaml ./environment.yaml
 COPY ../../llm.env llm.env
 RUN micromamba install -y -n base -f environment.yaml && \
    micromamba clean --all --yes
-COPY /samples_e2e/financial_transcripts/ /opt/chatbot/
+COPY /samples/financial_transcripts/ /opt/chatbot/
 USER root
 RUN chmod -R 777 /opt/chatbot
 USER micromamba
 ENTRYPOINT ["streamlit", "run"]
-CMD ["main.py","--server.port","8000","--theme.base","dark"]
+CMD ["st_main.py","--server.port","8000","--theme.base","dark"]
 
